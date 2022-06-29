@@ -3,3 +3,4 @@
 .env
 .phpunit.cache
 /vendor
+/logs/production

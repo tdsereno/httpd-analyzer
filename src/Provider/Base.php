@@ -11,7 +11,10 @@ abstract class Base
 
     protected static function getCurrentProvider()
     {
-        return self::$currentProvider[static::getType()];
+        if(isset(self::$currentProvider[static::getType()])) {
+            return self::$currentProvider[static::getType()];
+        }
+        return NULL;
     }
 
     public static function setCurrentProvider($currentProvider)

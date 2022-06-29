@@ -124,16 +124,19 @@ class Analyzer
 
     public function addLogData($line, $fileName)
     {
+        if (!$line)
+        {
+            return $this;
+        }
         $timer = microtime(TRUE);
 
-        echo(PHP_EOL);
         try
         {
             $result = $this->getApacheLogParser()->parse($line, TRUE);
         }
         catch (\Exception $ex)
         {
-      
+            return $this;
         }
 
 
@@ -178,16 +181,22 @@ class Analyzer
         $min = date_create($this->getMinDate());
         $max = date_create($this->getMaxDate());
 
+        if (!isset($result['responseSize']))
+        {
+            // var_dump($result, $line);
+            //die();
+        }
+
         $this->logGroup[$name]
                 ->setRemoteHostname($name)
                 ->addHit()
                 ->addUrl($url)
                 ->addMethod($method)
                 ->addStatus($result['status'])
-                ->addUserAgent($result['requestHeader:User-agent'])
+                ->addUserAgent($result['requestHeader:User-agent'] ?? '')
                 ->addIp($result['remoteHostname'])
                 ->addDate($result['time'])
-                ->addSize($result['responseSize']);
+                ->addSize($result['responseSize'] ?? '');
         \Tdsereno\HttpdAnalyzer\Timer::addElapsedTime('method addRequestData (parse+process)', $timer);
         return $this;
     }
@@ -220,7 +229,8 @@ class Analyzer
 
     private function processSingleFile($file)
     {
-        $fileName = end(explode('/', $file));
+        $res = explode('/', $file);
+        $fileName = end($res);
 
         if ($fh = fopen($file, "r"))
         {
@@ -314,6 +324,7 @@ class Analyzer
 
         Printer::debug('Processed ' . count($this->getFiles()) . ' files ');
         Printer::debug('with size of ' . $size . ' ');
+        Printer::debug('In a total of ' . count($this->getLogGroup()) . ' domains');
         Printer::debug('in a total of ' . $info['totalLines'] . ' lines ');
         Printer::debug('with success on ' . $info['parsedLines'] . ' lines ');
         Printer::debug('in ' . floor(Timer::get('All')) . ' seconds ');

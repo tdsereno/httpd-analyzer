@@ -89,7 +89,9 @@ Output in terminal
 ## Perfomance
 I tested with with more than 20 log files, with maxDepth 40
 In a digital ocean droplet, with 1 VCPU, 1GB RAM and SSD
+|Processed 19 files |with size of 1466MB |In a total of 19 domains|in a total of 4823685 lines |with success on 4823685 lines |in 270 seconds |about 17856 lines per seconds |
 Docker running with WSL in a i5-7400 3.0GHZ
+|Processed 19 files |with size of 1466MB |In a total of 19 domains|in a total of 4823685 lines |with success on 4823685 lines |in 2519 seconds |about 1914 lines per seconds |
 
 ## Getting started
 

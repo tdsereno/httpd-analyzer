@@ -114,7 +114,7 @@ class Analyzer
         }
         if ($this->getDistintDomain())
         {
-            $logFormat = "%h %l %u %t  \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"";
+            $logFormat = "%v %h %l %u %t  \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"";
             return $cache = new \BenMorel\ApacheLogParser\Parser($logFormat);
         }
 
@@ -171,7 +171,7 @@ class Analyzer
         $name = $fileName;
         if ($this->getDistintDomain())
         {
-            $name = $this->logGroup[$result['serverName']];
+            $name = $result['serverName'] ?? $name;
         }
         if (!isset($this->logGroup[$name]))
         {
@@ -243,7 +243,7 @@ class Analyzer
                 self::addFileSize($block);
                 $fgetslines = explode("\n", $temp);
                 $fgetslines[0] = $left . $fgetslines[0];
-                if (!feof($fh) && $lines)
+                if (!feof($fh) && isset($lines))
                 {
                     $left = array_pop($lines);
                 }

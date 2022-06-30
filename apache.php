@@ -7,8 +7,10 @@ set_time_limit(0);
 ini_set('memory_limit', '2048M');
 
 $analyzer = new \Tdsereno\HttpdAnalyzer\Analyzer();
-// $analyzer->addFile(__DIR__ . '/logs/no_domain_acess.log');
-$analyzer->setDistintDomain(TRUE);
+//$analyzer->addFile(__DIR__ . '/logs/no_domain_acess.log');
+// $analyzer->setDistintDomain(TRUE);
+$analyzer->setGroupBy('Domains Agrouped');
+
 foreach (glob(__DIR__ . '/logs/production/*') as $filename)
 {
     $analyzer->addFile($filename);

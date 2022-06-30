@@ -17,10 +17,22 @@ class Analyzer
     protected $minDate, $maxDate;
     protected $distintDomain = FALSE;
     protected $totalSize = 0;
+    protected $groupBy = FALSE;
 
     public function __construct()
     {
         Helper::loadEnv();
+    }
+
+    public function getGroupBy()
+    {
+        return $this->groupBy;
+    }
+
+    public function setGroupBy($groupBy)
+    {
+        $this->groupBy = $groupBy;
+        return $this;
     }
 
     public function getDistintDomain()
@@ -174,6 +186,11 @@ class Analyzer
         if ($this->getDistintDomain())
         {
             $name = $result['serverName'] ?? $name;
+        }
+        
+        if ($this->getGroupBy())
+        {
+            $name = $this->getGroupBy();
         }
         if (!isset($this->logGroup[$name]))
         {
@@ -339,7 +356,7 @@ class Analyzer
     {
         $info = self::getLogInfo();
 
-        $size = round($info['size'] / 1024 / 1024, 1) . 'MB';
+        $size = round($info['totalSize'] / 1024 / 1024, 1) . 'MB';
 
         Printer::debug('Processed ' . count($this->getFiles()) . ' files ');
         Printer::debug('with size of ' . $size . ' ');

@@ -16,6 +16,7 @@ class Analyzer
     protected $maxDepth = 10;
     protected $minDate, $maxDate;
     protected $distintDomain = FALSE;
+    protected $totalSize = 0;
 
     public function __construct()
     {
@@ -102,6 +103,7 @@ class Analyzer
     public function addFile($file)
     {
         $this->files[] = $file;
+        self::addFileSizeTotal(filesize($file));
         return $this;
     }
 
@@ -204,7 +206,8 @@ class Analyzer
     static private $logInfo = [
         'parsedLines' => 0,
         'totalLines' => 0,
-        'size' => 0,
+        'sizeReaded' => 0,
+        'totalSize' => 0
     ];
 
     public static function addParsedLine()
@@ -217,9 +220,19 @@ class Analyzer
         self::$logInfo['totalLines']++;
     }
 
-    public static function addFileSize($size)
+    public static function addFileSizeReaded($size)
     {
-        self::$logInfo['size'] += $size;
+        self::$logInfo['sizeReaded'] += $size;
+    }
+
+    public static function addFileSizeTotal($size)
+    {
+        self::$logInfo['totalSize'] += $size;
+    }
+
+    public static function getCurrentProgress()
+    {
+        return Helper::parseBytes(self::$logInfo['sizeReaded']) . ' / ' . Helper::parseBytes(self::$logInfo['totalSize']);
     }
 
     private static function getLogInfo()
@@ -231,7 +244,8 @@ class Analyzer
     {
         $res = explode('/', $file);
         $fileName = end($res);
-
+        //Printer::memoryUsage();
+        Printer::debug('Processando ' . $file);
         if ($fh = fopen($file, "r"))
         {
             $left = '';
@@ -240,7 +254,7 @@ class Analyzer
             {// read the file
                 $timerFile = microtime(TRUE);
                 $temp = fread($fh, $block);
-                self::addFileSize($block);
+                self::addFileSizeReaded($block);
                 $fgetslines = explode("\n", $temp);
                 $fgetslines[0] = $left . $fgetslines[0];
                 if (!feof($fh) && isset($lines))
@@ -248,6 +262,8 @@ class Analyzer
                     $left = array_pop($lines);
                 }
                 \Tdsereno\HttpdAnalyzer\Timer::addElapsedTime('Reading file', $timerFile);
+                // Printer::debug(date("Y-m-d H:i:s") . ' - Reading some lines . ' . self::getCurrentProgress());
+                Printer::replaceOut(date("Y-m-d H:i:s") . ' - Reading some lines . ' . self::getCurrentProgress());
                 foreach ($fgetslines as $k => $line)
                 {
                     self::addTotalLine();
@@ -255,6 +271,8 @@ class Analyzer
                     {
                         $timerRequest = microtime(TRUE);
                         $this->addLogData($line, $fileName);
+                        // Printer::debug('Add log data  ' . $file);
+                        // Printer::memoryUsage();
                         \Tdsereno\HttpdAnalyzer\Timer::addElapsedTime('method addRequestData', $timerRequest);
                         self::addParsedLine();
                     }
@@ -265,6 +283,7 @@ class Analyzer
                     }
                 }
             }
+            fclose($fh);
         }
         else
         {

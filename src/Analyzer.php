@@ -24,7 +24,7 @@ class Analyzer
         Helper::loadEnv();
     }
 
-    public function getGroupBy()
+    private function getGroupBy()
     {
         return $this->groupBy;
     }
@@ -35,7 +35,7 @@ class Analyzer
         return $this;
     }
 
-    public function getDistintDomain()
+    private function getDistintDomain()
     {
         return $this->distintDomain;
     }
@@ -57,12 +57,12 @@ class Analyzer
         return $this;
     }
 
-    public function getMinDate()
+    private function getMinDate()
     {
         return $this->minDate;
     }
 
-    public function getMaxDate()
+    private function getMaxDate()
     {
         return $this->maxDate;
     }
@@ -79,7 +79,7 @@ class Analyzer
         return $this;
     }
 
-    public function getMaxDepth()
+    private function getMaxDepth()
     {
         return $this->maxDepth;
     }
@@ -90,7 +90,7 @@ class Analyzer
         return $this;
     }
 
-    public function getFilter()
+    private function getFilter()
     {
         return $this->filter;
     }
@@ -119,7 +119,7 @@ class Analyzer
         return $this;
     }
 
-    public function getApacheLogParser()
+    private function getApacheLogParser()
     {
         static $cache = NULL;
         if ($cache)
@@ -146,6 +146,7 @@ class Analyzer
 
         try
         {
+            // @todo multiple log format, detect it
             $result = $this->getApacheLogParser()->parse($line, TRUE);
         }
         catch (\Exception $ex)
@@ -187,7 +188,7 @@ class Analyzer
         {
             $name = $result['serverName'] ?? $name;
         }
-        
+
         if ($this->getGroupBy())
         {
             $name = $this->getGroupBy();
@@ -200,11 +201,6 @@ class Analyzer
         $min = date_create($this->getMinDate());
         $max = date_create($this->getMaxDate());
 
-        if (!isset($result['responseSize']))
-        {
-            // var_dump($result, $line);
-            //die();
-        }
 
         $this->logGroup[$name]
                 ->setRemoteHostname($name)
@@ -212,7 +208,7 @@ class Analyzer
                 ->addUrl($url)
                 ->addMethod($method)
                 ->addStatus($result['status'])
-                ->addUserAgent($result['requestHeader:User-agent'] ?? '')
+                ->addUserAgent($result['requestHeader:User-Agent'] ?? 'Without User Agent')
                 ->addIp($result['remoteHostname'])
                 ->addDate($result['time'])
                 ->addSize($result['responseSize'] ?? '');
@@ -227,27 +223,27 @@ class Analyzer
         'totalSize' => 0
     ];
 
-    public static function addParsedLine()
+    private static function addParsedLine()
     {
         self::$logInfo['parsedLines']++;
     }
 
-    public static function addTotalLine()
+    private static function addTotalLine()
     {
         self::$logInfo['totalLines']++;
     }
 
-    public static function addFileSizeReaded($size)
+    private static function addFileSizeReaded($size)
     {
         self::$logInfo['sizeReaded'] += $size;
     }
 
-    public static function addFileSizeTotal($size)
+    private static function addFileSizeTotal($size)
     {
         self::$logInfo['totalSize'] += $size;
     }
 
-    public static function getCurrentProgress()
+    private static function getCurrentProgress()
     {
         return Helper::parseBytes(self::$logInfo['sizeReaded']) . ' / ' . Helper::parseBytes(self::$logInfo['totalSize']);
     }
@@ -266,7 +262,7 @@ class Analyzer
         if ($fh = fopen($file, "r"))
         {
             $left = '';
-            $block = 1024 * 1024; //1MB or counld be any higher than HDD block_size*2s
+            $block = 1 * (1024 * 1024); //1MB or counld be any higher than HDD block_size*2s
             while (!feof($fh))
             {// read the file
                 $timerFile = microtime(TRUE);
@@ -335,6 +331,7 @@ class Analyzer
 
     public function print()
     {
+        Printer::replaceOut('');
         foreach ($this->logGroup as /* @var $r GroupedRequest */ $key => $r)
         {
             $r->print($this->getMaxDepth());
@@ -358,13 +355,13 @@ class Analyzer
 
         $size = round($info['totalSize'] / 1024 / 1024, 1) . 'MB';
 
-        Printer::debug('Processed ' . count($this->getFiles()) . ' files ');
-        Printer::debug('with size of ' . $size . ' ');
-        Printer::debug('In a total of ' . count($this->getLogGroup()) . ' domains');
-        Printer::debug('in a total of ' . $info['totalLines'] . ' lines ');
-        Printer::debug('with success on ' . $info['parsedLines'] . ' lines ');
-        Printer::debug('in ' . floor(Timer::get('All')) . ' seconds ');
-        Printer::debug('about ' . floor(($info['totalLines'] / Timer::get('All'))) . ' lines per seconds ');
+        Printer::debugN('Processed ' . count($this->getFiles()) . ' files ');
+        Printer::debugN('with size of ' . $size . ' ');
+        Printer::debugN('In a total of ' . count($this->getLogGroup()) . ' domains ');
+        Printer::debugN('in a total of ' . $info['totalLines'] . ' lines ');
+        Printer::debugN('with success on ' . $info['parsedLines'] . ' lines ');
+        Printer::debugN('in ' . floor(Timer::get('All')) . ' seconds ');
+        Printer::debugN('about ' . floor(($info['totalLines'] / Timer::get('All'))) . ' lines per seconds ');
     }
 
 }

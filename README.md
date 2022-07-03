@@ -1,3 +1,4 @@
+
 Apache2 Log Analyzer - PHP
 =
 
@@ -16,10 +17,11 @@ So, you can add log files, like this:
     $analyzer->addFile(__DIR__ . '/logs/no_domain_acess.log');
 or add a folder this:
 
-     foreach (glob(__DIR__ . '/logs/production/*') as $filename)
-     {
-	       $mainRequest->addFile($filename);
-     }
+    foreach (glob(__DIR__ . '/logs/*.{*}', GLOB_BRACE) as $filename)
+    {
+        $analyzer->addFile($filename);
+    }
+
 Set the max depth for show results:     
 
     $analyzer->setMaxDepth(40);
@@ -31,8 +33,12 @@ So, after add the logs, you can proccess all files:
 
 Output this in terminal:
 
-
     $analyzer->print();
+   
+Get the object and made yourself analityc, its return a array of Model\Httpd\LogGroup
+
+    $result = $analizer->getLogGroup();
+  
 
 Output to txt
 
@@ -87,11 +93,15 @@ Output in terminal
     php -f apache.php 
 
 ## Perfomance
-I tested with with more than 20 log files, with maxDepth 40
+I tested with with more than 40 log files, with maxDepth 40
+
 In a digital ocean droplet, with 1 VCPU, 1GB RAM and SSD
-|Processed 19 files |with size of 1466MB |In a total of 19 domains|in a total of 4823685 lines |with success on 4823685 lines |in 270 seconds |about 17856 lines per seconds |
+
+    |Processed 19 files |with size of 1466MB |In a total of 19 domains|in a total of 4823685 lines |with success on 4823685 lines |in 270 seconds |about 17856 lines per seconds |
+
 Docker running with WSL in a i5-7400 3.0GHZ
-|Processed 19 files |with size of 1466MB |In a total of 19 domains|in a total of 4823685 lines |with success on 4823685 lines |in 2519 seconds |about 1914 lines per seconds |
+
+    |Processed 19 files |with size of 1466MB |In a total of 19 domains|in a total of 4823685 lines |with success on 4823685 lines |in 2519 seconds |about 1914 lines per seconds |
 
 ## Getting started
 

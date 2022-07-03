@@ -4,3 +4,4 @@
 .phpunit.cache
 /vendor
 /logs/production
+/cover

@@ -75,6 +75,15 @@ class Printer
         echo( self::mb_str_pad(mb_substr($text, 0, $size), $size, ' ', $pad) . '|');
     }
 
+    public static function debugN($text, $size = NULL, $pad = STR_PAD_LEFT)
+    {
+        if (!$size)
+        {
+            $sise = mb_strlen($text);
+        }
+        echo( self::mb_str_pad(mb_substr($text, 0, $size), $size, ' ', $pad));
+    }
+
     public static function newLine()
     {
         echo(PHP_EOL . '|');
@@ -122,6 +131,7 @@ class Printer
         // Return to the beginning of the line
         echo "\r";
         echo($str);
+        return;
         // Can be consolodated into
         // echo "\r\033[K\033[1A\r\033[K\r";
         /*

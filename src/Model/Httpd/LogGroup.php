@@ -52,7 +52,7 @@ class LogGroup
                 return $this;
             }
 
-            $this->browsers[$value] = (new \Tdsereno\HttpdAnalyzer\Model\UserAgent())->setUserAgent($value)->addCount();
+            $this->browsers[$value] = (new \Tdsereno\HttpdAnalyzer\Model\UserAgent(['userAgent' => $value]))->addCount();
             return $this;
         }
         catch (\Exception $ex)
@@ -380,7 +380,6 @@ class LogGroup
         \Tdsereno\HttpdAnalyzer\Printer::newLine();
         \Tdsereno\HttpdAnalyzer\Printer::debug('-- TOP ' . $maxDepth . ' BROWSER:', 20, STR_PAD_RIGHT);
         \Tdsereno\HttpdAnalyzer\Printer::newLine();
-
         foreach (array_slice($this->getBrowsers(), 0, $maxDepth) as $browser)
         {
             $browser->loadInfo();

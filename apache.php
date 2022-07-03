@@ -26,8 +26,9 @@ $analyzer->load();
 
 $result = $analyzer->getLogGroup();
 
+/*
 print_r($result);
-die();
+die();*/
 
 $analyzer->print();
 

@@ -46,6 +46,10 @@ class Analyzer
         return $this;
     }
 
+    /**
+     * 
+     * @return Model\Httpd\LogGroup[]
+     */
     public function getLogGroup(): array
     {
         return $this->logGroup;

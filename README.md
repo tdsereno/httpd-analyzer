@@ -12,7 +12,7 @@ First, download it and install depedencies
 
     git clone https://github.com/tdsereno/httpd-analyzer.git
     cd httpd-analyzer
-    composer install
+    composer install --ignore-platform-reqs
     php -f apache.php 
 
  All start in instance the analyzer, like this:

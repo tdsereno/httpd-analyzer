@@ -205,14 +205,15 @@ class Analyzer
         $min = date_create($this->getMinDate());
         $max = date_create($this->getMaxDate());
 
-
+      //  print_r($result);
         $this->logGroup[$name]
                 ->setRemoteHostname($name)
                 ->addHit()
                 ->addUrl($url)
                 ->addMethod($method)
                 ->addStatus($result['status'])
-                ->addUserAgent($result['requestHeader:User-Agent'] ?? 'Without User Agent')
+                // user agent camel case on A
+                ->addUserAgent($result['requestHeader:User-Agent'] ?? $result['requestHeader:User-agent'] ?? 'Without User Agent')
                 ->addIp($result['remoteHostname'])
                 ->addDate($result['time'])
                 ->addSize($result['responseSize'] ?? '');

@@ -1,6 +1,3 @@
-
-
-
 Apache2/Httpd Log Analyzer - PHP
 =
 ## Whats is
@@ -95,12 +92,3 @@ In a digital ocean droplet, with 1 VCPU Shared, 1GB RAM and SSD (using SWAP) -  
 In a digital ocean droplet, with 2 VCPU Decidated, 8GB RAM and SSD - 47784 lines per seconds
     
     Processed 57 files with size of 3740.6MB In a total of 12412537 lines with success on 12412537 lines in 259 seconds about 47784 lines per seconds
-
-
-
-## License
-
-This project is open-sourced software licensed under the [GPL license](https://www.gnu.org/copyleft/gpl.html)
-
-## Credits
-

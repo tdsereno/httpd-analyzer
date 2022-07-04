@@ -1,7 +1,11 @@
 {
     "name": "tdsereno/httpd-analyzer",
     "description": "Analise de logs apache httpd",
-    "type": "project",
+    "type": "library",
+    "keywords": [
+        "Apache", "httpd", "log", "analytic", "Parse", "Parser"
+    ],
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Tdsereno\\HttpdAnalyzer\\": "src/"

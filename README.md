@@ -1,3 +1,4 @@
+
 Apache2/Httpd Log Analyzer - PHP
 =
 ## Whats is
@@ -7,12 +8,16 @@ A tool to analyze logs from an apache web server, with one or more domains, exam
 ## Requirements
  + PHP 7.3.0 or newer 
 ## Getting started
-First, download it and install depedencies
+Download it standalone and install depedencies
 
     git clone https://github.com/tdsereno/httpd-analyzer.git
     cd httpd-analyzer
     composer install --ignore-platform-reqs
     php -f apache.php 
+
+Or, install via [Composer](https://getcomposer.org/): 
+
+    composer require tdsereno/httpd-analyzer
 
  All start in instance the analyzer, like this:
 
@@ -22,7 +27,7 @@ First, download it and install depedencies
 
     $analyzer->addFile(__DIR__ . '/logs/no_domain_acess.log');
 
-Add a folder this:
+Add a folder:
 
       foreach (glob(__DIR__ . '/logs/*.{*}', GLOB_BRACE) as $filename)
       {
@@ -36,6 +41,7 @@ Set the max depth for show results:
 So, after add the logs, you can proccess all files:
 
     $analyzer->load();
+
 Output this in terminal:
 
     $analyzer->print();
@@ -59,8 +65,8 @@ Filter a date period
     $mainRequest->setMaxDate('24/Jun/2022:23:59:00 -0300');
 
 ## Log Format
-According the httpd documentation,
-https://httpd.apache.org/docs/2.4/mod/mod_log_config.html#examples
+According the httpd documentation, [httpd documentation](https://httpd.apache.org/docs/2.4/mod/mod_log_config.html#examples):
+
 Default Log Format - Common Log Format (CLF)
 (Dont have the the canonical ServerName of the server serving the request)
 

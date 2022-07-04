@@ -1,9 +1,11 @@
 
 
+
 Apache2/Httpd Log Analyzer - PHP
 =
 ## Whats is
-A tool to analyze logs from an apache web server, with one or more domains
+A tool to analyze logs from an apache web server, with one or more domains, example output:
+<img src="https://github.com/tdsereno/httpd-analyzer/blob/main/result_example.png">
 
 ## Requirements
  + PHP 7.3.0 or newer 

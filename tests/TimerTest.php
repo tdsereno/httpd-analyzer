@@ -24,7 +24,7 @@ final class TimerTest extends TestCase
         $this->assertIsArray(\Tdsereno\HttpdAnalyzer\Timer::getElapsedTimers());
 
         $this->assertGreaterThan(1, \Tdsereno\HttpdAnalyzer\Timer::getTotalTime(), 'Tempo passado deve ser 1');
-        $this->assertLessThan(1.1, \Tdsereno\HttpdAnalyzer\Timer::getTotalTime(), 'Tempo passado deve ser 1');
+        $this->assertLessThan(1.2, \Tdsereno\HttpdAnalyzer\Timer::getTotalTime(), 'Tempo passado deve ser 1');
     }
 
 }

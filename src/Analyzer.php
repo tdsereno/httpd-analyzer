@@ -35,17 +35,6 @@ class Analyzer
         return $this;
     }
 
-    private function getDistintDomain()
-    {
-        return $this->distintDomain;
-    }
-
-    public function setDistintDomain($distintDomain)
-    {
-        $this->distintDomain = $distintDomain;
-        return $this;
-    }
-
     /**
      * 
      * @return Model\Httpd\LogGroup[]
@@ -123,24 +112,47 @@ class Analyzer
         return $this;
     }
 
-    private function getApacheLogParser()
+    const FORMAT_WITH_SERVER = 2;
+    const FORMAT_DEFAULT = 1;
+
+    private function getLogFormat($line)
     {
-        static $cache = NULL;
-        if ($cache)
+        $formats = [self::FORMAT_WITH_SERVER, self::FORMAT_DEFAULT];
+        foreach ($formats as $format)
         {
-            return $cache;
+            try
+            {
+                $parser = $this->getApacheLogParser($format);
+                $result = $parser->parse($line, TRUE);
+                return $format;
+            }
+            catch (\Exception $ex)
+            {
+                // Printer::debug($ex->getMessage());
+            }
         }
-        if ($this->getDistintDomain())
+        // Printer::debug('Nenhum formato encontrado para linha: ' . $line);
+        throw new \Exception('Unsported log format');
+    }
+
+    private function getApacheLogParser($format)
+    {
+        static $cache = [];
+        if (isset($cache[$format]))
+        {
+            return $cache[$format];
+        }
+        if ($format == self::FORMAT_WITH_SERVER)
         {
             $logFormat = "%v %h %l %u %t  \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"";
-            return $cache = new \BenMorel\ApacheLogParser\Parser($logFormat);
+            return $cache[$format] = new \BenMorel\ApacheLogParser\Parser($logFormat);
         }
 
         $logFormat = "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"";
-        return $cache = new \BenMorel\ApacheLogParser\Parser($logFormat);
+        return $cache[$format] = new \BenMorel\ApacheLogParser\Parser($logFormat);
     }
 
-    public function addLogData($line, $fileName)
+    public function addLogData($line, $fileName, $format)
     {
         if (!$line)
         {
@@ -151,7 +163,7 @@ class Analyzer
         try
         {
             // @todo multiple log format, detect it
-            $result = $this->getApacheLogParser()->parse($line, TRUE);
+            $result = $this->getApacheLogParser($format)->parse($line, TRUE);
         }
         catch (\Exception $ex)
         {
@@ -187,11 +199,7 @@ class Analyzer
                 return $this;
             }
         }
-        $name = $fileName;
-        if ($this->getDistintDomain())
-        {
-            $name = $result['serverName'] ?? $name;
-        }
+        $name = isset($result['serverName']) ? $result['serverName'] : $fileName;
 
         if ($this->getGroupBy())
         {
@@ -207,7 +215,7 @@ class Analyzer
 
       //  print_r($result);
         $this->logGroup[$name]
-                ->setRemoteHostname($name)
+                ->setNameServer($name)
                 ->addHit()
                 ->addUrl($url)
                 ->addMethod($method)
@@ -263,13 +271,15 @@ class Analyzer
         $res = explode('/', $file);
         $fileName = end($res);
         //Printer::memoryUsage();
-        Printer::debug('Processando ' . $file);
+        // Printer::debug('Processando ' . $file);
         if ($fh = fopen($file, "r"))
         {
             $left = '';
             $block = 1 * (1024 * 1024); //1MB or counld be any higher than HDD block_size*2s
+          
             while (!feof($fh))
-            {// read the file
+            {
+                // read the file
                 $timerFile = microtime(TRUE);
                 $temp = fread($fh, $block);
                 self::addFileSizeReaded($block);
@@ -281,14 +291,17 @@ class Analyzer
                 }
                 \Tdsereno\HttpdAnalyzer\Timer::addElapsedTime('Reading file', $timerFile);
                 // Printer::debug(date("Y-m-d H:i:s") . ' - Reading some lines . ' . self::getCurrentProgress());
-                Printer::replaceOut(date("Y-m-d H:i:s") . ' - Reading some lines . ' . self::getCurrentProgress());
+               // Printer::replaceOut(date("Y-m-d H:i:s") . ' - Reading some lines . ' . self::getCurrentProgress());
+
+                $format = $this->getLogFormat($fgetslines[0]);
+
                 foreach ($fgetslines as $k => $line)
                 {
                     self::addTotalLine();
                     try
                     {
                         $timerRequest = microtime(TRUE);
-                        $this->addLogData($line, $fileName);
+                        $this->addLogData($line, $fileName, $format);
                         // Printer::debug('Add log data  ' . $file);
                         // Printer::memoryUsage();
                         \Tdsereno\HttpdAnalyzer\Timer::addElapsedTime('method addRequestData', $timerRequest);

@@ -20,7 +20,7 @@ final class AnalyzerTest extends TestCase
         $analyzer = new \Tdsereno\HttpdAnalyzer\Analyzer();
         foreach ($lines as $line)
         {
-            $analyzer->addLogData($line);
+            $analyzer->addLogData($line, 'test.log', \Tdsereno\HttpdAnalyzer\Analyzer::FORMAT_WITH_SERVER);
         }
         $analyzer->load();
 
@@ -37,12 +37,11 @@ final class AnalyzerTest extends TestCase
     {
         $analyzer = new \Tdsereno\HttpdAnalyzer\Analyzer();
 
-        $analyzer->addFile(__DIR__ . '/Logs/access_log.txt');
+        $analyzer->addFile(__DIR__ . '/Logs/access_log_nameserver.txt');
         
         $analyzer->load();
 
         $logsGroup = $analyzer->getLogGroup();
-
         $this->assertCount(4, $logsGroup, 'Log Group must have four domains');
     }
 

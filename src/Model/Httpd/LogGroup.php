@@ -5,7 +5,7 @@ namespace Tdsereno\HttpdAnalyzer\Model\Httpd;
 class LogGroup
 {
 
-    protected $remoteHostname;
+    protected $nameServer;
     protected $hitCount = 0;
     protected $size = 0;
 
@@ -238,14 +238,14 @@ class LogGroup
         return \Tdsereno\HttpdAnalyzer\Helper::parseBytes($this->size);
     }
 
-    public function getRemoteHostname()
+    public function getNameServer()
     {
-        return $this->remoteHostname;
+        return $this->nameServer;
     }
 
-    public function setRemoteHostname($remoteHostname)
+    public function setNameServer($nameServer)
     {
-        $this->remoteHostname = $remoteHostname;
+        $this->nameServer = $nameServer;
         return $this;
     }
 
@@ -397,7 +397,7 @@ class LogGroup
     public function printMainInfo()
     {
         \Tdsereno\HttpdAnalyzer\Printer::newLine();
-        \Tdsereno\HttpdAnalyzer\Printer::debugTextBgGreen($this->getRemoteHostname(), 30);
+        \Tdsereno\HttpdAnalyzer\Printer::debugTextBgGreen($this->getNameServer(), 30);
 
         \Tdsereno\HttpdAnalyzer\Printer::debug($this->getMinDate(), 20);
         \Tdsereno\HttpdAnalyzer\Printer::debug(' - ', 3);

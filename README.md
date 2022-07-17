@@ -1,8 +1,9 @@
 
+
 Apache2/Httpd Log Analyzer - PHP
 =
-## Whats is
-A tool to analyze logs from an apache web server, with one or more domains, example output:
+A tool to analyze logs from an apache web server, with one or more domains and multiple log formats.
+Example output:
 <img src="https://github.com/tdsereno/httpd-analyzer/blob/main/result_example.png">
 
 ## Requirements
@@ -56,23 +57,22 @@ Output this in terminal:
 
 Filter a domain or a log file (if dont use the canonical Server name in log)
 
-    $mainRequest->setFilter('www.mydomain.com.br');
-    $mainRequest->setFilter('mydomain_access.log');
+    $analizer->setFilter('www.mydomain.com.br');
+    $analizer->setFilter('mydomain_access.log');
 
 Filter a date period
 
-    $mainRequest->setMinDate('24/Jun/2022:23:30:00 -0300');
-    $mainRequest->setMaxDate('24/Jun/2022:23:59:00 -0300');
+    $analizer->setMinDate('24/Jun/2022:23:30:00 -0300');
+    $analizer->setMaxDate('24/Jun/2022:23:59:00 -0300');
 
 ## Log Format
-According the httpd documentation, [httpd documentation](https://httpd.apache.org/docs/2.4/mod/mod_log_config.html#examples):
+In case of servers that host more than one domain, it is natural to want to analyze the accesses, individually, by default, according to the [httpd documentation](https://httpd.apache.org/docs/2.4/mod/mod_log_config.html#examples), the default log format is:
 
 Default Log Format - Common Log Format (CLF)
-(Dont have the the canonical ServerName of the server serving the request)
 
     "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\""
 
-Suggestion: (Have the The canonical ServerName of the server serving the request)
+My suggestion: (Have the The canonical ServerName of the server serving the request)
 
     "%v %h %l %u %t  \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\""
 
@@ -84,12 +84,12 @@ On ubuntu is:
 
     /etc/apache2/apache2.conf
 
-If you dont wanna change the log format, you can separete each ServerName im a log file
+If you don't wanna change the log format, you can separete each ServerName im a log file
 
 
 
 ## Perfomance
-I tested with with more than real 50 log files, in  size of 3.7Gb
+I tested with more than real 50 log files, in  size of 3.7Gb
 
 In a digital ocean droplet, with 1 VCPU Shared, 1GB RAM and SSD (using SWAP) -  8179 lines per seconds
 

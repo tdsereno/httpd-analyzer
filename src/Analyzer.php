@@ -132,7 +132,7 @@ class Analyzer
             }
         }
         // Printer::debug('Nenhum formato encontrado para linha: ' . $line);
-        throw new \Exception('Unsported log format');
+        throw new \Exception('Unsuported log format: ' . $line);
     }
 
     private function getApacheLogParser($format)
@@ -276,7 +276,7 @@ class Analyzer
         {
             $left = '';
             $block = 1 * (1024 * 1024); //1MB or counld be any higher than HDD block_size*2s
-          
+
             while (!feof($fh))
             {
                 // read the file
@@ -291,9 +291,19 @@ class Analyzer
                 }
                 \Tdsereno\HttpdAnalyzer\Timer::addElapsedTime('Reading file', $timerFile);
                 // Printer::debug(date("Y-m-d H:i:s") . ' - Reading some lines . ' . self::getCurrentProgress());
-               // Printer::replaceOut(date("Y-m-d H:i:s") . ' - Reading some lines . ' . self::getCurrentProgress());
+                // Printer::replaceOut(date("Y-m-d H:i:s") . ' - Reading some lines . ' . self::getCurrentProgress());
+                try
+                {
+                    // in some cases, the first line is broken, so, detetec the format by 2nd line
+                    $format = $this->getLogFormat($fgetslines[1]);
+                }
+                catch (\Exception $ex)
+                {
 
-                $format = $this->getLogFormat($fgetslines[0]);
+                    Printer::debug($ex->getMessage() . ' on ' . $file);
+                    continue;
+                }
+
 
                 foreach ($fgetslines as $k => $line)
                 {
